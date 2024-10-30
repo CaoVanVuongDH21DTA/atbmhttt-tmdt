@@ -92,7 +92,9 @@
                             }
                         }
                         .prd-actions{
-                            .action-buys{
+                            display: flex;
+                            gap: 1%;
+                            .action-buys, .action-add {
                                 display: flex;
                                 margin-bottom: 8px;
 

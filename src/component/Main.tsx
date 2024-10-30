@@ -39,8 +39,6 @@ export default function Main(){
     //     fetchProducts();
     // }, [])
 
-    // Hello my name is Hà
-
     useEffect(() => {
         console.log("get products data from json file");
 

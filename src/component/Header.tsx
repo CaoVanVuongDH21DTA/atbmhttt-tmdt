@@ -1,10 +1,10 @@
-import React, {useEffect, useState} from 'react';
-import '../style/header.css'
-import axios from 'axios'
+import React, { useEffect, useState } from 'react';
+import '../style/header.css';
+import axios from 'axios';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import {Link} from "react-router-dom";
-import {useShoppingContext} from "../contexts/ShoppingContext";
-import {CartItem} from "./CartItem";
+import { Link } from "react-router-dom";
+import { useShoppingContext } from "../contexts/ShoppingContext";
+import { CartItem } from "./CartItem";
 
 interface Product {
     id: string;
@@ -16,24 +16,23 @@ interface Product {
 
 export default function Header() {
     const [products, setProducts] = useState<Product[]>([]);
-    const {cartItems, cartQty, totalPrice} = useShoppingContext();
-
+    const { cartItems, cartQty, totalPrice } = useShoppingContext();
 
     useEffect(() => {
         console.log("get products data from api");
 
         const fetchProducts = async () => {
             try {
-                const res = await axios.get('http://localhost:3001/products')
-                console.log("product => ", res)
-                setProducts(res.data)
-            } catch (error){
-                console.log("error => ", error)
+                const res = await axios.get('http://localhost:3001/products');
+                console.log("product => ", res);
+                setProducts(res.data);
+            } catch (error) {
+                console.log("error => ", error);
             }
-        }
+        };
         fetchProducts();
-    }, [])
- 
+    }, []);
+
     const [searchTerm, setSearchTerm] = useState('');
     const [isDropdownVisible, setDropdownVisible] = useState(false);
 
@@ -48,20 +47,14 @@ export default function Header() {
         product.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    // const formattedPrice = product?.price?Number(product.price).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }):'';
-    // const formattedOriginalPrice = product?.originalPrice ? product.originalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) : '';
-
-    // // Lấy tối đa 6 sản phẩm
-    // const visibleProducts = products.slice(0, 6);
-
-    return(
+    return (
         <header>
             <div className="header_top">
                 <div className="container">
                     <div className="row-header">
                         <div className="left-header">
                             <a href="/" className="header_logo">
-                                <img src="https://file.hstatic.net/200000636033/file/logo_fd11946b31524fbe98765f34f3de0628.svg"/>
+                                <img src="https://file.hstatic.net/200000636033/file/logo_fd11946b31524fbe98765f34f3de0628.svg" />
                             </a>
                             <div className="header-item menu">
                                 <div className="header-text">
@@ -80,7 +73,7 @@ export default function Header() {
                                 <div className="search-box">
                                     <form action="/search" className="search_product" id="search_product">
                                         <div className="search-inner">
-                                            <input type="hidden" name="tyle" value="product"/>
+                                            <input type="hidden" name="tyle" value="product" />
                                             <input
                                                 required
                                                 id="inputSearchAuto"
@@ -110,13 +103,13 @@ export default function Header() {
                                                                 {product.name}
                                                             </a>
                                                             <p>
-                                                                <span>{product.price}đ</span>
-                                                                <del>{product.originalPrice}đ</del>
+                                                                <span>{Number(product.price).toLocaleString('vi-VN')}đ</span>
+                                                                <del>{Number(product.originalPrice).toLocaleString('vi-VN')}đ</del>
                                                             </p>
                                                         </div>
                                                         <div className="thumbs">
                                                             <a href="/" title={product.name}>
-                                                                <img alt={product.name} src={product.imageUrl}/>
+                                                                <img alt={product.name} src={product.imageUrl} />
                                                             </a>
                                                         </div>
                                                     </div>
@@ -141,7 +134,7 @@ export default function Header() {
                                             <i className="bi bi-headset"></i>
                                         </span>
                                         <span className="box-text">
-                                            Hotline <br/> 0708811203
+                                            Hotline <br /> 0708811203
                                         </span>
                                     </a>
                                 </div>
@@ -155,7 +148,7 @@ export default function Header() {
                                             <i className="bi bi-geo-alt"></i>
                                         </span>
                                         <span className="box-text">
-                                            Hệ thống <br/> Showroom
+                                            Hệ thống <br /> Showroom
                                         </span>
                                     </a>
                                 </div>
@@ -169,7 +162,7 @@ export default function Header() {
                                             <i className="bi bi-clipboard2-data"></i>
                                         </span>
                                         <span className="box-text">
-                                            Tra cứu <br/> đơn hàng
+                                            Tra cứu <br /> đơn hàng
                                         </span>
                                     </a>
                                 </div>
@@ -185,7 +178,7 @@ export default function Header() {
                                             </span>
                                         </span>
                                         <span className="box-text">
-                                            Giỏ <br/> hàng
+                                            Giỏ <br /> hàng
                                         </span>
                                     </a>
                                 </div>
@@ -197,16 +190,16 @@ export default function Header() {
                                         <div className="cart-content">
                                             {cartItems.length === 0 ? (
                                                 <div>
-                                                    <span>Giỏ hàng trống mời bạn mua hàng</span>
+                                                    <span>Làm gì có món hàng nào mà coi, hãy mua hàng đi.</span>
                                                 </div>
                                             ) : (
                                                 cartItems.map(item => {
-                                                    return <CartItem key={item.id} {...item}/>
+                                                    return <CartItem key={item.id} {...item} />;
                                                 })
                                             )}
                                         </div>
                                         <div className="cart-total">
-                                            <span>Total: {totalPrice}đ</span>
+                                            <span>Total: {Number(totalPrice).toLocaleString('vi-VN')}đ</span>
                                             <Link to="/checkout" className="btn-pay">Check out</Link>
                                         </div>
                                     </div>
@@ -220,7 +213,7 @@ export default function Header() {
                                             <i className="bi bi-person"></i>
                                         </span>
                                         <span className="box-text">
-                                            Đăng <br/> nhập
+                                            Đăng <br /> nhập
                                         </span>
                                     </a>
                                 </div>
@@ -242,7 +235,6 @@ export default function Header() {
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
