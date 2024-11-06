@@ -200,7 +200,7 @@ export default function Header() {
                                         </div>
                                         <div className="cart-total">
                                             <span>Total: {Number(totalPrice).toLocaleString('vi-VN')}đ</span>
-                                            <Link to="/checkout" className="btn-pay">Check out</Link>
+                                            <Link to="/checkout" className="btn-pay">Thanh toán</Link>
                                         </div>
                                     </div>
                                 </div>
