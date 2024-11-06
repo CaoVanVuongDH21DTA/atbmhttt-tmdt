@@ -2,9 +2,10 @@ import React, {useEffect, useState} from 'react';
 import '../style/header.css'
 import axios from 'axios'
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {useShoppingContext} from "../contexts/ShoppingContext";
 import {CartItem} from "./CartItem";
+import Service from "../service/Service";
 
 interface Product {
     id: string;
@@ -16,8 +17,39 @@ interface Product {
 
 export default function Header() {
     const [products, setProducts] = useState<Product[]>([]);
+    const [product, setProduct] = useState<Product[]>([]);
     const {cartItems, cartQty, totalPrice} = useShoppingContext();
+    const navigate = useNavigate();
+    const isAuthenticated = Service.isAuthenticated();
 
+    const [profileInfo, setProfileInfo] = useState({
+        id: '',
+        name: '',
+        email: '',
+        role: '',
+        city: ''
+    });
+
+    useEffect(() => {
+        fetchProfileInfo();
+    }, []);
+
+    const fetchProfileInfo = async () => {
+        try {
+            const token = localStorage.getItem('token'); // Retrieve the token from localStorage
+            const response = await Service.getYourProfile(token);
+            setProfileInfo(response.ourUsers);
+        } catch (error) {
+            console.error('Error fetching profile information:', error);
+        }
+    };
+
+    const handleLogout = () => {
+        const confirmDelete = window.confirm('Are you sure you want to logout this user?');
+        if (confirmDelete) {
+            Service.logout();
+        }
+    };
 
     useEffect(() => {
         console.log("get products data from api");
@@ -51,8 +83,8 @@ export default function Header() {
     // const formattedPrice = product?.price?Number(product.price).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }):'';
     // const formattedOriginalPrice = product?.originalPrice ? product.originalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) : '';
 
-    // // Lấy tối đa 6 sản phẩm
-    // const visibleProducts = products.slice(0, 6);
+    // Lấy tối đa 6 sản phẩm
+    const visibleProducts = products.slice(0, 6);
 
     return(
         <header>
@@ -103,26 +135,25 @@ export default function Header() {
                                     {isDropdownVisible && (
                                         <div className="search-dropdown">
                                             <div className="resultsContent">
-                                                {filteredProducts.map((product) => (
+                                                {visibleProducts.map((product) => (
                                                     <div key={product.id} className="item-ult">
                                                         <div className="title">
                                                             <a href="/" title={product.name}>
                                                                 {product.name}
                                                             </a>
                                                             <p>
-                                                                <span>{product.price}đ</span>
-                                                                <del>{product.originalPrice}đ</del>
+                                                                <span>{product.price.toLocaleString('vi-VN')}đ</span>
+                                                                <del>{product.originalPrice.toLocaleString('vi-VN')}đ</del>
                                                             </p>
                                                         </div>
                                                         <div className="thumbs">
                                                             <a href="/" title={product.name}>
-                                                                <img alt={product.name} src={product.imageUrl}/>
+                                                                <img alt={product.name} src={product.imageUrl} />
                                                             </a>
                                                         </div>
                                                     </div>
                                                 ))}
 
-                                                {/* Hiển thị liên kết "Xem thêm sản phẩm" nếu có nhiều hơn 6 sản phẩm */}
                                                 {filteredProducts.length > 6 && (
                                                     <div className="view-more">
                                                         <a href="/search">Xem thêm sản phẩm...</a>
@@ -136,7 +167,8 @@ export default function Header() {
 
                             <div className="header-item hotline">
                                 <div className="header-text">
-                                    <a className="header_link" href="tel:0708811203" title="Hotline" aria-label="hotline">
+                                    <a className="header_link" href="tel:0708811203" title="Hotline"
+                                       aria-label="hotline">
                                         <span className="box-icon">
                                             <i className="bi bi-headset"></i>
                                         </span>
@@ -174,7 +206,6 @@ export default function Header() {
                                     </a>
                                 </div>
                             </div>
-
                             <div className="header-item cart">
                                 <div className="header-text">
                                     <a className="header_link" href="/" title="Giỏ hàng" aria-label="Giỏ hàng">
@@ -197,16 +228,16 @@ export default function Header() {
                                         <div className="cart-content">
                                             {cartItems.length === 0 ? (
                                                 <div>
-                                                    <span>Giỏ hàng trống mời bạn mua hàng</span>
+                                                    <span>Làm gì có món hàng nào mà coi, hãy mua hàng đi.</span>
                                                 </div>
                                             ) : (
                                                 cartItems.map(item => {
-                                                    return <CartItem key={item.id} {...item}/>
+                                                    return <CartItem key={item.id} {...item} />;
                                                 })
                                             )}
                                         </div>
                                         <div className="cart-total">
-                                            <span>Total: {totalPrice}đ</span>
+                                            <span>Total: {Number(totalPrice).toLocaleString('vi-VN')}đ</span>
                                             <Link to="/checkout" className="btn-pay">Check out</Link>
                                         </div>
                                     </div>
@@ -227,17 +258,35 @@ export default function Header() {
 
                                 <div className="header-dropdown">
                                     <div className="box-account">
-                                        <p>
-                                            <span><i className="bi bi-person-raised-hand"></i></span>
-                                            <span>Xin chào, vui lòng đăng nhập</span>
-                                        </p>
-                                        <div className="btn-login-register">
-                                            <button className="btn-account">Đăng nhập</button>
-                                            <button className="btn-account">Đăng ký</button>
-                                        </div>
-                                        <p>
-                                            <span><i className="bi bi-question-circle"></i></span>
-                                            <a href="/">Trợ giúp</a>
+                                        {!isAuthenticated &&
+                                            <p>
+                                                <span><i className="bi bi-person-raised-hand"></i></span>
+                                                <span>Xin chào, vui lòng đăng nhập</span>
+                                            </p>}
+                                        {!isAuthenticated &&
+                                            <div className="btn-login-register">
+                                                <button className="btn-account" onClick={() => navigate('/login')}>Đăng
+                                                    nhập
+                                                </button>
+                                                <button className="btn-account"
+                                                        onClick={() => navigate('/register')}>Đăng ký
+                                                </button>
+                                            </div>}
+                                        {isAuthenticated &&
+                                            <>
+                                                <p>Name: {profileInfo.name}</p>
+                                                <p>Email: {profileInfo.email}</p>
+                                                {profileInfo.role === "ADMIN" && (
+                                                    <Link to="/admin">Admin</Link>
+                                                )}
+                                            </>
+                                        }
+                                        <p className="bottom_box-account">
+                                            <div>
+                                                <span><i className="bi bi-question-circle"></i></span>
+                                                <a href="/">Trợ giúp</a>
+                                            </div>
+                                            {isAuthenticated && <Link to="/" onClick={handleLogout}>Logout</Link>}
                                         </p>
                                     </div>
                                 </div>

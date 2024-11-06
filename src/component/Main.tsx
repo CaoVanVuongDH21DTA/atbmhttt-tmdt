@@ -1,8 +1,9 @@
-import React, {useEffect, useState} from "react";
-import '../style/main.css'
+import React, { useEffect, useState } from "react";
+import '../style/main.css';
 import { Link } from 'react-router-dom';
-import axios from "axios";
-import productData from '../product.json';
+import axios from 'axios';
+import Service from "../service/Service";
+
 interface Product {
     id: string;
     name: string;
@@ -20,30 +21,37 @@ interface Product {
     imageUrl: string;
 }
 
-export default function Main(){
-
+export default function Main() {
     const [products, setProducts] = useState<Product[]>([]);
 
-    // useEffect(() => {
-    //     console.log("get products data from api");
-    //
-    //     const fetchProducts = async () => {
-    //         try {
-    //             const res = await axios.get('./product.json')
-    //             console.log("product => ", res)
-    //             setProducts(res.data)
-    //         } catch (error){
-    //             console.log("error => ", error)
-    //         }
-    //     }
-    //     fetchProducts();
-    // }, [])
-
     useEffect(() => {
-        console.log("get products data from json file");
+        console.log("Fetching products from API...");
 
-        setProducts(productData.products);
-    }, []);
+        // Lấy dữ liệu sản phẩm từ API
+        const fetchProducts = async () => {
+            try {
+                const dataProduct = await Service.getAllProducts();
+                if (Array.isArray(dataProduct)) {
+                    setProducts(dataProduct);
+                } else {
+                    console.error("Response is not an array:", dataProduct);
+                }
+            } catch (error) {
+                console.error('Error fetching products:', error);
+            }
+        };
+
+        fetchProducts(); // Gọi API khi component được mount
+    }, []); // Chỉ gọi một lần khi component được mount
+
+    // Xử lý khi click vào sản phẩm
+    const formatProductName = (name: string): string => {
+        return name
+            .toLowerCase()
+            .replace(/\s+/g, '-') // Thay dấu cách bằng dấu gạch nối
+            .normalize('NFD') // Chuyển ký tự có dấu thành không dấu
+            .replace(/[\u0300-\u036f]/g, ''); // Loại bỏ dấu
+    };
 
     const itemProductHDToShow = 5; // Số lượng item cần hiển thị
     const totalProductHD = products.length; // Tổng số sản phẩm
@@ -82,7 +90,7 @@ export default function Main(){
         });
     };
 
-    return(
+    return (
         <div className="main">
             <div className="product_horizontal">
                 <div className="top-prdhor">
@@ -92,21 +100,18 @@ export default function Main(){
                     <div className="owl_stage_outer">
                         <div className="owl_stage" style={updateItemPrdHDList()}>
                             {products.map((product) => (
-                                <div className="item" key={product.id} style={setInitialPositionProductHD()}>
+                                <div className="item" key={product.name} style={setInitialPositionProductHD()}>
                                     <div className="out-item">
-                                        <Link to={`/product/${product.id}`} className="main_item">
+                                        <Link to={`/product/${formatProductName(product.name)}`}
+                                        className="main_item">
                                             <div className="item-label">
-                                            <span className="lb-tragop">
-                                                Trả góp 0%
-                                            </span>
+                                                <span className="lb-tragop">Trả góp 0%</span>
                                             </div>
                                             <div className="img_item">
-                                                <img src={product.imageUrl} alt={product.name}/>
+                                                <img src={product.imageUrl} alt={product.name} />
                                             </div>
                                             <h3 className="proloop-name">
-                                                <a href={`/product/${product.id}`}>
-                                                    {product.name}
-                                                </a>
+                                                <a href={`/product/${product.id}`}>{product.name}</a>
                                             </h3>
                                             <div className="proloop-technical">
                                                 <div className="profile-technical">
@@ -146,7 +151,7 @@ export default function Main(){
                                                     <b>{product.rating}</b>
                                                     <i className="bi bi-star-fill"></i>
                                                 </div>
-                                                <h4>({product.reviews})</h4>
+                                                <h4>({product.reviews}) đánh giá</h4>
                                             </div>
                                         </Link>
                                     </div>
@@ -164,74 +169,67 @@ export default function Main(){
             <div className="block_product">
                 <div className="box_content">
                     <ul className="listPrd">
-                        {products.map((products) => (
-                            <li className="item" key={products.id}>
-                                <Link to={`/product/${products.id}`} className="main_item">
+                        {products.map((product) => (
+                            <li className="item" key={product.id}>
+                                <Link to={`/product/${formatProductName(product.name)}`} className="main_item">
                                     <div className="item-label">
-                                        <span className="lb-tragop">
-                                            Trả góp 0%
-                                        </span>
+                                        <span className="lb-tragop">Trả góp 0%</span>
                                     </div>
                                     <div className="img_item">
-                                        <img src={products.imageUrl} alt={products.name}/>
+                                        <img src={product.imageUrl} alt={product.name} />
                                     </div>
                                     <h3 className="proloop-name">
-                                        <a href={`/product/${products.id}`}>
-                                            {products.name}
-                                        </a>
+                                        <a href={`/product/${product.id}`}>{product.name}</a>
                                     </h3>
                                     <div className="proloop-technical">
                                         <div className="profile-technical">
                                             <i className="bi bi-cpu"></i>
-                                            <span>{products.cpu}</span>
+                                            <span>{product.cpu}</span>
                                         </div>
                                         <div className="profile-technical">
                                             <i className="bi bi-gpu-card"></i>
-                                            <span>{products.gpu}</span>
+                                            <span>{product.gpu}</span>
                                         </div>
                                         <div className="profile-technical">
                                             <i className="bi bi-memory"></i>
-                                            <span>{products.ram}</span>
+                                            <span>{product.ram}</span>
                                         </div>
                                         <div className="profile-technical">
                                             <i className="bi bi-device-ssd"></i>
-                                            <span>{products.storage}</span>
+                                            <span>{product.storage}</span>
                                         </div>
                                         <div className="profile-technical">
                                             <i className="bi bi-tv"></i>
-                                            <span>{products.screen}</span>
+                                            <span>{product.screen}</span>
                                         </div>
                                         <div className="profile-technical">
                                             <i className="bi bi-radar"></i>
-                                            <span>{products.refreshRate}</span>
+                                            <span>{product.refreshRate}</span>
                                         </div>
                                     </div>
                                     <strong className="price">
-                                        {Number(products.price).toLocaleString('vi-VN', {
+                                        {Number(product.price).toLocaleString('vi-VN', {
                                             style: 'currency',
                                             currency: 'VND'
                                         })}
-                                        <small>{products.discount}</small>
+                                        <small>{product.discount}</small>
                                     </strong>
                                     <div className="vote_txt">
                                         <div className="vote">
-                                            <b>{products.rating}</b>
+                                            <b>{product.rating}</b>
                                             <i className="bi bi-star-fill"></i>
                                         </div>
-                                        <h4>({products.reviews})</h4>
+                                        <h4>({product.reviews}) đánh giá</h4>
                                     </div>
                                 </Link>
                             </li>
                         ))}
-
                     </ul>
-                    <a href="" className="readmore">
-                        <span>
-                            Xem thêm
-                        </span>
+                    <a href="#" className="readmore">
+                        <span>Xem thêm</span>
                     </a>
                 </div>
             </div>
         </div>
-    )
+    );
 }

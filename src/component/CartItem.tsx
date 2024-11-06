@@ -1,21 +1,23 @@
 import React from "react";
-import {useShoppingContext} from "../contexts/ShoppingContext";
+import { useShoppingContext } from "../contexts/ShoppingContext";
 
-type CartItemProps ={
-    id: string
-    name: string
-    price: number
-    qty:number
-    imgUrl: string
+type CartItemProps = {
+    id: string;
+    name: string;
+    price: number;
+    qty: number;
+    imgUrl: string;
 }
 
-export const CartItem = ({id, name , price, qty, imgUrl}: CartItemProps) => {
-    const {increaseQty, decreaseQty, removeCartItem} = useShoppingContext();
+export const CartItem = ({ id, name, price, qty, imgUrl }: CartItemProps) => {
+    const { increaseQty, decreaseQty, removeCartItem } = useShoppingContext();
 
-    return(
+    const formattedPrice = (price * qty).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+
+    return (
         <div className="item-cart">
             <div className="img-prd">
-                <img src={imgUrl} alt={name}/>
+                <img src={imgUrl} alt={name} />
             </div>
             <div className="name-prd">
                 <h6>{name}</h6>
@@ -25,12 +27,12 @@ export const CartItem = ({id, name , price, qty, imgUrl}: CartItemProps) => {
                     <i className="bi bi-plus-lg"></i>
                 </button>
                 <span>{qty}</span>
-                <button className="btn-down"onClick={() => decreaseQty(id)}>
+                <button className="btn-down" onClick={() => decreaseQty(id)}>
                     <i className="bi bi-dash-lg"></i>
                 </button>
             </div>
             <div className="price-prd">
-                {price * qty}đ
+                {formattedPrice}
             </div>
             <div className="delete-prd">
                 <button className="btn-delete" onClick={() => removeCartItem(id)}>

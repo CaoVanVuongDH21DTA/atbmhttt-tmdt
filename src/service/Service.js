@@ -93,7 +93,7 @@ class Service {
         }
     }
 
-    static async deleteProduct(gameId){
+    static async deleteProduct(productId){
         try {
             const response = await axios.delete(`${Service.BASE_URL}/products/${productId}`);
             return response.data;
