@@ -80,7 +80,22 @@ const Checkout = () => {
             if (step === 2) {
                 // Khi chuyển sang bước 2 (Thanh toán), tạo mã đơn hàng
                 const newOrderCode = generateOrderCode();
-                setOrderCode(newOrderCode);  // Lưu mã đơn hàng vào state
+                setOrderCode(newOrderCode); // Lưu mã đơn hàng vào state
+                localStorage.setItem('orderCode', newOrderCode);
+
+                // Lưu thông tin vào localStorage (lưu thông tin khách hàng)
+                const orderDetails = {
+                    orderCode: newOrderCode,
+                    name: name,
+                    phone: phone,
+                    address: address,
+                    gender: gender,
+                    totalPrice: totalPrice,
+                    items: cartItems,
+                    status: 'Đang chờ xác nhận',
+                    note: note,
+                };
+                localStorage.setItem('orderDetails', JSON.stringify(orderDetails));  // Lưu thông tin đơn hàng vào localStorage
             }
             setStep(step + 1);
         } else {
@@ -276,7 +291,13 @@ const Checkout = () => {
                             <h4>{orderCode}</h4>
                         </div>
                         <div className="button-back">
-                            <button className="backtomain" onClick={handleBackToMain}><i className="bi bi-caret-left-fill"></i> Trở về trang chủ</button>
+                            <button className="backtomain" onClick={handleBackToMain}><i
+                                className="bi bi-caret-left-fill"></i> Trở về trang chủ
+                            </button>
+                            <button className="order-track" onClick={() => navigate(`/order-tracking/${orderCode}`)}>Tra
+                                cứu đơn hàng
+                            </button>
+
                         </div>
                     </div>
                 )}
@@ -284,10 +305,10 @@ const Checkout = () => {
 
             {step < 3 && cartItems.length > 0 && (
                 <div className="back-summary">
-                    <h2>Tổng cộng</h2>
                     <p>
                         Tổng giá trị: <span>{Number(totalPrice).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</span>
                     </p>
+                    <h2>Số lượng: {cartItems.reduce((total, item) => total + item.qty, 0)}</h2>
                     <div className="button-group">
                         {step > 0 && (
                             <button className="btn-back" onClick={handlePreviousStep}>

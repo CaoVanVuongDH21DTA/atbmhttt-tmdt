@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { useShoppingContext } from "../contexts/ShoppingContext";
 import { CartItem } from "./CartItem";
 
+
 interface Product {
     id: string;
     name: string;
@@ -156,7 +157,7 @@ export default function Header() {
 
                             <div className="header-item ordertracking">
                                 <div className="header-text">
-                                    <a className="header_link" href="/" title="Tra cứu đơn hàng"
+                                    <a className="header_link" href="/OrderTracking" title="Tra cứu đơn hàng"
                                        aria-label="Tra cứu đơn hàng">
                                         <span className="box-icon">
                                             <i className="bi bi-clipboard2-data"></i>
@@ -170,7 +171,7 @@ export default function Header() {
 
                             <div className="header-item cart">
                                 <div className="header-text">
-                                    <a className="header_link" href="/" title="Giỏ hàng" aria-label="Giỏ hàng">
+                                    <Link className="header_link" to="/cart" title="Giỏ hàng" aria-label="Giỏ hàng">
                                         <span className="box-icon">
                                             <i className="bi bi-cart"></i>
                                             <span className="count-holder">
@@ -180,7 +181,8 @@ export default function Header() {
                                         <span className="box-text">
                                             Giỏ <br /> hàng
                                         </span>
-                                    </a>
+                                    </Link>
+
                                 </div>
                                 <div className="dropdown-cart">
                                     <div className="your-cart">
@@ -193,7 +195,7 @@ export default function Header() {
                                                     <span>Làm gì có món hàng nào mà coi, hãy mua hàng đi.</span>
                                                 </div>
                                             ) : (
-                                                cartItems.map(item => {
+                                                cartItems.slice(0, 1000000000000000000000).map(item => {
                                                     return <CartItem key={item.id} {...item} />;
                                                 })
                                             )}
