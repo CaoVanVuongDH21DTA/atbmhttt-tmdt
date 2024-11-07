@@ -22,7 +22,7 @@ export const CartItem = ({ id, name, price, qty, imgUrl }: CartItemProps) => {
             <div className="name-prd">
                 <h6>{name}</h6>
             </div>
-            <div className="quanlity">
+            <div className="quantity">
                 <button className="btn-up" onClick={() => increaseQty(id)}>
                     <i className="bi bi-plus-lg"></i>
                 </button>

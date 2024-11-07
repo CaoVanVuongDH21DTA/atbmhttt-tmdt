@@ -84,15 +84,18 @@
                             width: 100%;
                             border-radius: 4px;
                             overflow-y: scroll;
-                            height: max-content;
+                            height: auto;
 
                             .resultsContent{
-                                height: 400px;
+                                height: auto;
+                                max-height: 400px;
+                                overflow-y: auto;
 
                                 .item-ult{
                                     padding: 12px 0;
                                     border-bottom: 1px solid #ECECEC;
                                     display: flex;
+                                    margin-bottom: 10px;
 
                                     .thumbs{
                                         width: 40px;
@@ -332,6 +335,9 @@
                 .cart-content{
                     display: flex;
                     text-align: center;
+                    height: auto;
+                    max-height: 270px;
+                    overflow-y: auto;
                     flex-direction: column;
                     position: relative;
                     border-top: 1px solid rgba(0, 0, 0, 0.33);
@@ -362,7 +368,7 @@
                             }
                         }
 
-                        .quanlity{
+                        .quantity{
                             display: flex;
                             align-items: center;
                             .btn-up, .btn-down{

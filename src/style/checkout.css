@@ -60,14 +60,25 @@
     }
 
     .checkout-items {
+        .checkout-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
         margin-top: 60px;
         background-color: white;
         padding: 20px;
         border-radius: 8px;
         box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
         margin-bottom: 20px;
+        font-size: 1rem;
+
+        h2 {
+            font-size: 1.5rem;
+        }
 
         .step01 {
+
             h2 {
                 margin-bottom: 15px;
                 font-size: 20px;
@@ -222,13 +233,17 @@
     }
 
     .back-summary {
+        display: flex;
+        gap: 30px;
+        align-items: center;
+        justify-content: space-between;
         padding: 15px;
         background-color: #f1f1f1;
         border-radius: 8px;
 
         h2 {
             margin-bottom: 10px;
-            font-size: 18px;
+            font-size: 1.1rem;
             color: #333;
         }
 
@@ -246,6 +261,7 @@
         .button-group {
             display: flex;
             justify-content: center;
+            gap: 5px;
 
             .btn-back,
             .btn-pay {
@@ -261,7 +277,7 @@
             }
 
             .btn-pay {
-                background-color: red;
+                background-color: gray;
                 color: white;
 
                 &:hover {
@@ -270,8 +286,12 @@
             }
 
             .btn-back {
-                background-color: #f0f0f0;
-                color: #333;
+                background-color: gray;
+                color: white;
+
+                &:hover {
+                    background-color: red;
+                }
             }
         }
     }
